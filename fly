@@ -12,7 +12,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 0, 200)  -- Increased the height to fit new buttons
+frame.Size = UDim2.new(0, 375, 0, 300)  -- Increased size by 1.5x
 frame.Position = UDim2.new(0.75, 0, 0.2, 0)
 frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 frame.BackgroundTransparency = 0.3
@@ -72,11 +72,11 @@ toggleFly.Font = Enum.Font.SourceSansBold
 toggleFly.TextSize = 18
 toggleFly.Parent = frame
 
--- Adding the Up and Down buttons
+-- Adding the Up and Down buttons as squares
 local upButton = Instance.new("TextButton")
-upButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+upButton.Size = UDim2.new(0.2, 0, 0.2, 0)  -- Square shape
 upButton.Position = UDim2.new(0.1, 0, 0.85, 0)
-upButton.Text = "Up (Hold)"
+upButton.Text = "Up"
 upButton.TextColor3 = Color3.new(1, 1, 1)
 upButton.BackgroundColor3 = Color3.new(0.2, 0.8, 0.8)
 upButton.Font = Enum.Font.SourceSansBold
@@ -84,9 +84,9 @@ upButton.TextSize = 18
 upButton.Parent = frame
 
 local downButton = Instance.new("TextButton")
-downButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-downButton.Position = UDim2.new(0.1, 0, 1.05, 0)
-downButton.Text = "Down (Hold)"
+downButton.Size = UDim2.new(0.2, 0, 0.2, 0)  -- Square shape
+downButton.Position = UDim2.new(0.6, 0, 0.85, 0)
+downButton.Text = "Down"
 downButton.TextColor3 = Color3.new(1, 1, 1)
 downButton.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
 downButton.Font = Enum.Font.SourceSansBold
@@ -105,7 +105,6 @@ closeButton.Parent = frame
 
 -- Fly Variables
 local flying = false
-local noclip = false
 local speed = 50
 local bodyVelocity, bodyGyro
 
@@ -152,28 +151,6 @@ local function Fly()
     end
 end
 
--- Noclip Functionality
-local function ToggleNoclip()
-    noclip = not noclip
-    humanoid.PlatformStand = noclip
-    if noclip then
-        rootPart.CanCollide = false
-        -- Enable noclip movement (like flying but can go through walls)
-        game:GetService("RunService").Heartbeat:Connect(function()
-            if noclip then
-                local moveDirection = Vector3.new()
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
-                rootPart.CFrame = rootPart.CFrame + moveDirection * speed * 0.1
-            end
-        end)
-    else
-        rootPart.CanCollide = true
-    end
-end
-
 -- Move Up or Down (Only while flying)
 local function MoveUp()
     if flying then
@@ -199,16 +176,14 @@ slider.FocusLost:Connect(function()
     end
 end)
 
--- Keybind to Toggle Fly and Noclip
+-- Button Actions
+upButton.MouseButton1Down:Connect(MoveUp)
+downButton.MouseButton1Down:Connect(MoveDown)
+
+-- Keybind to Toggle Fly
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.E then
         Fly()
-    elseif input.KeyCode == Enum.KeyCode.R then
-        ToggleNoclip()
     end
 end)
-
--- Button Actions
-upButton.MouseButton1Down:Connect(MoveUp)
-downButton.MouseButton1Down:Connect(MoveDown)
