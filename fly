@@ -12,7 +12,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 375, 0, 300)  -- Increased size by 1.5x
+frame.Size = UDim2.new(0, 250, 0, 150)  -- Reverted size to original
 frame.Position = UDim2.new(0.75, 0, 0.2, 0)
 frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 frame.BackgroundTransparency = 0.3
@@ -72,27 +72,6 @@ toggleFly.Font = Enum.Font.SourceSansBold
 toggleFly.TextSize = 18
 toggleFly.Parent = frame
 
--- Adding the Up and Down buttons as squares
-local upButton = Instance.new("TextButton")
-upButton.Size = UDim2.new(0.2, 0, 0.2, 0)  -- Square shape
-upButton.Position = UDim2.new(0.1, 0, 0.85, 0)
-upButton.Text = "Up"
-upButton.TextColor3 = Color3.new(1, 1, 1)
-upButton.BackgroundColor3 = Color3.new(0.2, 0.8, 0.8)
-upButton.Font = Enum.Font.SourceSansBold
-upButton.TextSize = 18
-upButton.Parent = frame
-
-local downButton = Instance.new("TextButton")
-downButton.Size = UDim2.new(0.2, 0, 0.2, 0)  -- Square shape
-downButton.Position = UDim2.new(0.6, 0, 0.85, 0)
-downButton.Text = "Down"
-downButton.TextColor3 = Color3.new(1, 1, 1)
-downButton.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
-downButton.Font = Enum.Font.SourceSansBold
-downButton.TextSize = 18
-downButton.Parent = frame
-
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0.2, 0, 0.2, 0)
 closeButton.Position = UDim2.new(0.8, 0, 0, 0)
@@ -151,19 +130,6 @@ local function Fly()
     end
 end
 
--- Move Up or Down (Only while flying)
-local function MoveUp()
-    if flying then
-        bodyVelocity.Velocity = Vector3.new(bodyVelocity.Velocity.X, speed, bodyVelocity.Velocity.Z)
-    end
-end
-
-local function MoveDown()
-    if flying then
-        bodyVelocity.Velocity = Vector3.new(bodyVelocity.Velocity.X, -speed, bodyVelocity.Velocity.Z)
-    end
-end
-
 -- Toggle Fly on Button Click and Key Press
 toggleFly.MouseButton1Click:Connect(Fly)
 closeButton.MouseButton1Click:Connect(function() frame.Visible = false end)
@@ -175,10 +141,6 @@ slider.FocusLost:Connect(function()
         speed = newSpeed
     end
 end)
-
--- Button Actions
-upButton.MouseButton1Down:Connect(MoveUp)
-downButton.MouseButton1Down:Connect(MoveDown)
 
 -- Keybind to Toggle Fly
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
