@@ -12,7 +12,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 0, 150)  -- Reverted size to original
+frame.Size = UDim2.new(0, 250, 0, 150)
 frame.Position = UDim2.new(0.75, 0, 0.2, 0)
 frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 frame.BackgroundTransparency = 0.3
@@ -31,10 +31,20 @@ titleLabel.Font = Enum.Font.SourceSansBold
 titleLabel.TextSize = 20
 titleLabel.Parent = frame
 
--- New Label for "Made by Carl"
+-- Minimize Button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0.2, 0, 0.2, 0)
+minimizeButton.Position = UDim2.new(0.6, 0, 0, 0)
+minimizeButton.Text = "-"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextSize = 18
+minimizeButton.Parent = frame
+
 local madeByLabel = Instance.new("TextLabel")
 madeByLabel.Size = UDim2.new(1, 0, 0.2, 0)
-madeByLabel.Position = UDim2.new(0, 0, 0.8, 0)  -- Position it below "Fly Controls"
+madeByLabel.Position = UDim2.new(0, 0, 0.8, 0)
 madeByLabel.Text = "Made by Carl"
 madeByLabel.TextColor3 = Color3.new(1, 1, 1)
 madeByLabel.BackgroundTransparency = 1
@@ -82,70 +92,18 @@ closeButton.Font = Enum.Font.SourceSansBold
 closeButton.TextSize = 18
 closeButton.Parent = frame
 
--- Fly Variables
-local flying = false
-local speed = 50
-local bodyVelocity, bodyGyro
-
--- Function to Start/Stop Flying
-local function Fly()
-    if flying then
-        flying = false
-        if bodyVelocity then bodyVelocity:Destroy() end
-        if bodyGyro then bodyGyro:Destroy() end
-        humanoid.PlatformStand = false
-        -- Restore animations by creating a new Animator
-        local animator = humanoid:FindFirstChildOfClass("Animator")
-        if not animator then
-            Instance.new("Animator", humanoid)
+-- Minimize Functionality
+local minimized = false
+minimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    for _, child in pairs(frame:GetChildren()) do
+        if child ~= titleLabel and child ~= closeButton and child ~= minimizeButton then
+            child.Visible = not minimized
         end
-        StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
-    else
-        flying = true
-        StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
-        bodyVelocity = Instance.new("BodyVelocity", rootPart)
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        
-        bodyGyro = Instance.new("BodyGyro", rootPart)
-        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.P = 9e4
-        
-        -- Disable animations by removing the Animator
-        local animator = humanoid:FindFirstChildOfClass("Animator")
-        if animator then
-            animator:Destroy()
-        end
-        
-        game:GetService("RunService").Heartbeat:Connect(function()
-            if not flying then return end
-            local moveDirection = Vector3.new()
-            if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
-            bodyVelocity.Velocity = moveDirection * speed
-            bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-        end)
-    end
-end
-
--- Toggle Fly on Button Click and Key Press
-toggleFly.MouseButton1Click:Connect(Fly)
-closeButton.MouseButton1Click:Connect(function() frame.Visible = false end)
-
--- Change Speed from GUI
-slider.FocusLost:Connect(function()
-    local newSpeed = tonumber(slider.Text)
-    if newSpeed and newSpeed > 0 then
-        speed = newSpeed
     end
 end)
 
--- Keybind to Toggle Fly
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.E then
-        Fly()
-    end
+-- Close Button Functionality
+closeButton.MouseButton1Click:Connect(function()
+    frame.Visible = false
 end)
