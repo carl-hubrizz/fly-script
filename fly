@@ -7,145 +7,166 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- GUI Creation
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player:WaitForChild("PlayerGui")
+-- Function to Create GUI
+local function createGUI()
+    -- GUI Creation
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.Name = "FlyScriptGUI"
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 0, 150)
-frame.Position = UDim2.new(0.75, 0, 0.2, 0)
-frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-frame.BackgroundTransparency = 0.3
-frame.Draggable = true
-frame.Active = true
-frame.BorderSizePixel = 2
-frame.BorderColor3 = Color3.new(1, 1, 1)
-frame.Parent = screenGui
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 250, 0, 150)
+    frame.Position = UDim2.new(0.75, 0, 0.2, 0)
+    frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+    frame.BackgroundTransparency = 0.3
+    frame.Draggable = true
+    frame.Active = true
+    frame.BorderSizePixel = 2
+    frame.BorderColor3 = Color3.new(1, 1, 1)
+    frame.Parent = screenGui
 
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
-titleLabel.Text = "Fly Controls"
-titleLabel.TextColor3 = Color3.new(1, 1, 1)
-titleLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-titleLabel.Font = Enum.Font.SourceSansBold
-titleLabel.TextSize = 20
-titleLabel.Parent = frame
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    titleLabel.Text = "Fly Controls"
+    titleLabel.TextColor3 = Color3.new(1, 1, 1)
+    titleLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.TextSize = 20
+    titleLabel.Parent = frame
 
--- New Label for "Made by Carl"
-local madeByLabel = Instance.new("TextLabel")
-madeByLabel.Size = UDim2.new(1, 0, 0.2, 0)
-madeByLabel.Position = UDim2.new(0, 0, 0.8, 0)  -- Position it below "Fly Controls"
-madeByLabel.Text = "Made by Carl"
-madeByLabel.TextColor3 = Color3.new(1, 1, 1)
-madeByLabel.BackgroundTransparency = 1
-madeByLabel.Font = Enum.Font.SourceSans
-madeByLabel.TextSize = 16
-madeByLabel.Parent = frame
+    local madeByLabel = Instance.new("TextLabel")
+    madeByLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    madeByLabel.Position = UDim2.new(0, 0, 0.8, 0)
+    madeByLabel.Text = "Made by Carl"
+    madeByLabel.TextColor3 = Color3.new(1, 1, 1)
+    madeByLabel.BackgroundTransparency = 1
+    madeByLabel.Font = Enum.Font.SourceSans
+    madeByLabel.TextSize = 16
+    madeByLabel.Parent = frame
 
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 0.2, 0)
-textLabel.Position = UDim2.new(0, 0, 0.2, 0)
-textLabel.Text = "Fly Speed"
-textLabel.TextColor3 = Color3.new(1, 1, 1)
-textLabel.BackgroundTransparency = 1
-textLabel.Font = Enum.Font.SourceSans
-textLabel.TextSize = 16
-textLabel.Parent = frame
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    textLabel.Position = UDim2.new(0, 0, 0.2, 0)
+    textLabel.Text = "Fly Speed"
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.SourceSans
+    textLabel.TextSize = 16
+    textLabel.Parent = frame
 
-local slider = Instance.new("TextBox")
-slider.Size = UDim2.new(0.8, 0, 0.2, 0)
-slider.Position = UDim2.new(0.1, 0, 0.4, 0)
-slider.Text = "50"
-slider.TextColor3 = Color3.new(1, 1, 1)
-slider.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-slider.Font = Enum.Font.SourceSansBold
-slider.TextSize = 18
-slider.Parent = frame
+    local slider = Instance.new("TextBox")
+    slider.Size = UDim2.new(0.8, 0, 0.2, 0)
+    slider.Position = UDim2.new(0.1, 0, 0.4, 0)
+    slider.Text = "50"
+    slider.TextColor3 = Color3.new(1, 1, 1)
+    slider.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+    slider.Font = Enum.Font.SourceSansBold
+    slider.TextSize = 18
+    slider.Parent = frame
 
-local toggleFly = Instance.new("TextButton")
-toggleFly.Size = UDim2.new(0.8, 0, 0.2, 0)
-toggleFly.Position = UDim2.new(0.1, 0, 0.65, 0)
-toggleFly.Text = "Toggle Fly (E)"
-toggleFly.TextColor3 = Color3.new(1, 1, 1)
-toggleFly.BackgroundColor3 = Color3.new(0.2, 0.8, 0.2)
-toggleFly.Font = Enum.Font.SourceSansBold
-toggleFly.TextSize = 18
-toggleFly.Parent = frame
+    local toggleFly = Instance.new("TextButton")
+    toggleFly.Size = UDim2.new(0.8, 0, 0.2, 0)
+    toggleFly.Position = UDim2.new(0.1, 0, 0.65, 0)
+    toggleFly.Text = "Toggle Fly (E)"
+    toggleFly.TextColor3 = Color3.new(1, 1, 1)
+    toggleFly.BackgroundColor3 = Color3.new(0.2, 0.8, 0.2)
+    toggleFly.Font = Enum.Font.SourceSansBold
+    toggleFly.TextSize = 18
+    toggleFly.Parent = frame
 
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0.2, 0, 0.2, 0)
-closeButton.Position = UDim2.new(0.8, 0, 0, 0)
-closeButton.Text = "X"
-closeButton.TextColor3 = Color3.new(1, 0, 0)
-closeButton.BackgroundColor3 = Color3.new(0.5, 0, 0)
-closeButton.Font = Enum.Font.SourceSansBold
-closeButton.TextSize = 18
-closeButton.Parent = frame
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.2, 0, 0.2, 0)
+    closeButton.Position = UDim2.new(0.8, 0, 0, 0)
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.new(1, 0, 0)
+    closeButton.BackgroundColor3 = Color3.new(0.5, 0, 0)
+    closeButton.Font = Enum.Font.SourceSansBold
+    closeButton.TextSize = 18
+    closeButton.Parent = frame
 
--- Fly Variables
-local flying = false
-local speed = 50
-local bodyVelocity, bodyGyro
+    -- Fly Variables
+    local flying = false
+    local speed = 50
+    local bodyVelocity, bodyGyro
 
--- Function to Start/Stop Flying
-local function Fly()
-    if flying then
+    -- Function to Start/Stop Flying
+    local function Fly()
+        if flying then
+            flying = false
+            if bodyVelocity then bodyVelocity:Destroy() end
+            if bodyGyro then bodyGyro:Destroy() end
+            humanoid.PlatformStand = false
+            -- Restore animations by creating a new Animator
+            local animator = humanoid:FindFirstChildOfClass("Animator")
+            if not animator then
+                Instance.new("Animator", humanoid)
+            end
+            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
+        else
+            flying = true
+            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
+            bodyVelocity = Instance.new("BodyVelocity", rootPart)
+            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            
+            bodyGyro = Instance.new("BodyGyro", rootPart)
+            bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+            bodyGyro.P = 9e4
+            
+            -- Disable animations by removing the Animator
+            local animator = humanoid:FindFirstChildOfClass("Animator")
+            if animator then
+                animator:Destroy()
+            end
+            
+            game:GetService("RunService").Heartbeat:Connect(function()
+                if not flying then return end
+                local moveDirection = Vector3.new()
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
+                bodyVelocity.Velocity = moveDirection * speed
+                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+            end)
+        end
+    end
+
+    -- Toggle Fly on Button Click and Key Press
+    toggleFly.MouseButton1Click:Connect(Fly)
+    closeButton.MouseButton1Click:Connect(function() 
+        frame.Visible = false
         flying = false
         if bodyVelocity then bodyVelocity:Destroy() end
         if bodyGyro then bodyGyro:Destroy() end
-        humanoid.PlatformStand = false
-        -- Restore animations by creating a new Animator
-        local animator = humanoid:FindFirstChildOfClass("Animator")
-        if not animator then
-            Instance.new("Animator", humanoid)
+    end)
+
+    -- Change Speed from GUI
+    slider.FocusLost:Connect(function()
+        local newSpeed = tonumber(slider.Text)
+        if newSpeed and newSpeed > 0 then
+            speed = newSpeed
         end
-        StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
-    else
-        flying = true
-        StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
-        bodyVelocity = Instance.new("BodyVelocity", rootPart)
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        
-        bodyGyro = Instance.new("BodyGyro", rootPart)
-        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.P = 9e4
-        
-        -- Disable animations by removing the Animator
-        local animator = humanoid:FindFirstChildOfClass("Animator")
-        if animator then
-            animator:Destroy()
+    end)
+
+    -- Keybind to Toggle Fly
+    game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode.E then
+            Fly()
         end
-        
-        game:GetService("RunService").Heartbeat:Connect(function()
-            if not flying then return end
-            local moveDirection = Vector3.new()
-            if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
-            bodyVelocity.Velocity = moveDirection * speed
-            bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-        end)
-    end
+    end)
 end
 
--- Toggle Fly on Key Press and Button Click
-toggleFly.MouseButton1Click:Connect(Fly)
-closeButton.MouseButton1Click:Connect(function() frame.Visible = false end)
-
--- Change Speed from GUI
-slider.FocusLost:Connect(function()
-    local newSpeed = tonumber(slider.Text)
-    if newSpeed and newSpeed > 0 then
-        speed = newSpeed
-    end
+-- Create GUI when character is added or respawned
+player.CharacterAdded:Connect(function(char)
+    character = char
+    humanoid = character:WaitForChild("Humanoid")
+    rootPart = character:WaitForChild("HumanoidRootPart")
+    createGUI()
 end)
 
--- Keybind to Toggle Fly
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.E then
-        Fly()
-    end
-end)
+-- Initial GUI creation
+if player.Character then
+    createGUI()
+end
