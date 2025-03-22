@@ -84,18 +84,33 @@ local function createGUI()
     closeButton.TextSize = 18
     closeButton.Parent = frame
 
+    local deleteNotificationsButton = Instance.new("TextButton")
+    deleteNotificationsButton.Size = UDim2.new(0.2, 0, 0.2, 0)
+    deleteNotificationsButton.Position = UDim2.new(0.6, 0, 0, 0)
+    deleteNotificationsButton.Text = "Delete Notifications"
+    deleteNotificationsButton.TextColor3 = Color3.new(1, 1, 1)
+    deleteNotificationsButton.BackgroundColor3 = Color3.new(0.8, 0.8, 0.2)
+    deleteNotificationsButton.Font = Enum.Font.SourceSansBold
+    deleteNotificationsButton.TextSize = 16
+    deleteNotificationsButton.Parent = frame
+
     local flying = false
     local speed = 50
     local bodyVelocity, bodyGyro
+    local notificationsEnabled = true
 
     local function CFrameFly()
         if flying then
             flying = false
             humanoid.PlatformStand = false
-            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
+            if notificationsEnabled then
+                StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
+            end
         else
             flying = true
-            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
+            if notificationsEnabled then
+                StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
+            end
             humanoid.PlatformStand = true
             local lastPosition = rootPart.Position
 
@@ -115,46 +130,6 @@ local function createGUI()
         end
     end
 
-    local function Fly()
-        if flying then
-            flying = false
-            if bodyVelocity then bodyVelocity:Destroy() end
-            if bodyGyro then bodyGyro:Destroy() end
-            humanoid.PlatformStand = false
-            local animator = humanoid:FindFirstChildOfClass("Animator")
-            if not animator then
-                Instance.new("Animator", humanoid)
-            end
-            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
-        else
-            flying = true
-            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
-            bodyVelocity = Instance.new("BodyVelocity", rootPart)
-            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-
-            bodyGyro = Instance.new("BodyGyro", rootPart)
-            bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-            bodyGyro.P = 9e4
-
-            local animator = humanoid:FindFirstChildOfClass("Animator")
-            if animator then
-                animator:Destroy()
-            end
-
-            game:GetService("RunService").Heartbeat:Connect(function()
-                if not flying then return end
-                local moveDirection = Vector3.new()
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
-                bodyVelocity.Velocity = moveDirection * speed
-                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-            end)
-        end
-    end
-
     toggleFly.MouseButton1Click:Connect(function()
         if gameId == 10449761463 then
             CFrameFly()
@@ -168,6 +143,15 @@ local function createGUI()
         flying = false
         if bodyVelocity then bodyVelocity:Destroy() end
         if bodyGyro then bodyGyro:Destroy() end
+    end)
+
+    deleteNotificationsButton.MouseButton1Click:Connect(function()
+        notificationsEnabled = not notificationsEnabled
+        if notificationsEnabled then
+            deleteNotificationsButton.Text = "Delete Notifications"
+        else
+            deleteNotificationsButton.Text = "Bring Back Notifications"
+        end
     end)
 
     slider.FocusLost:Connect(function()
