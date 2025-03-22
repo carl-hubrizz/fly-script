@@ -92,8 +92,10 @@ local function createGUI()
         if flying then
             flying = false
             humanoid.PlatformStand = false
+            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
         else
             flying = true
+            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
             humanoid.PlatformStand = true
             local lastPosition = rootPart.Position
 
@@ -119,16 +121,27 @@ local function createGUI()
             if bodyVelocity then bodyVelocity:Destroy() end
             if bodyGyro then bodyGyro:Destroy() end
             humanoid.PlatformStand = false
+            local animator = humanoid:FindFirstChildOfClass("Animator")
+            if not animator then
+                Instance.new("Animator", humanoid)
+            end
+            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
         else
             flying = true
+            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
             bodyVelocity = Instance.new("BodyVelocity", rootPart)
             bodyVelocity.Velocity = Vector3.new(0, 0, 0)
             bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            
+
             bodyGyro = Instance.new("BodyGyro", rootPart)
             bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
             bodyGyro.P = 9e4
-            
+
+            local animator = humanoid:FindFirstChildOfClass("Animator")
+            if animator then
+                animator:Destroy()
+            end
+
             game:GetService("RunService").Heartbeat:Connect(function()
                 if not flying then return end
                 local moveDirection = Vector3.new()
