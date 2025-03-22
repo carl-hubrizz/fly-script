@@ -7,6 +7,9 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
 
+-- Game ID check
+local gameId = game.PlaceId
+
 -- Function to Create GUI
 local function createGUI()
     -- GUI Creation
@@ -89,7 +92,36 @@ local function createGUI()
     local speed = 50
     local bodyVelocity, bodyGyro
 
-    -- Function to Start/Stop Flying
+    -- Function to Start/Stop CFrame Flying (for specific game ID)
+    local function CFrameFly()
+        if flying then
+            flying = false
+            humanoid.PlatformStand = false
+            StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="Carl"; Duration=1;})
+        else
+            flying = true
+            StarterGui:SetCore("SendNotification", {Title="Fly Activated"; Text="Carl"; Duration=1;})
+            humanoid.PlatformStand = true
+            local lastPosition = rootPart.Position
+
+            game:GetService("RunService").Heartbeat:Connect(function()
+                if not flying then return end
+
+                local moveDirection = Vector3.new()
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
+
+                -- Adjust CFrame for flying movement
+                rootPart.CFrame = CFrame.new(lastPosition) * CFrame.new(moveDirection * speed * game:GetService("RunService").Heartbeat:Wait())
+
+                lastPosition = rootPart.Position
+            end)
+        end
+    end
+
+    -- Function to Start/Stop Normal Flying (for other games)
     local function Fly()
         if flying then
             flying = false
@@ -133,7 +165,14 @@ local function createGUI()
     end
 
     -- Toggle Fly on Button Click and Key Press
-    toggleFly.MouseButton1Click:Connect(Fly)
+    toggleFly.MouseButton1Click:Connect(function()
+        if gameId == 10449761463 then
+            CFrameFly()  -- CFrame fly for this game
+        else
+            Fly()  -- Normal fly for other games
+        end
+    end)
+
     closeButton.MouseButton1Click:Connect(function() 
         frame.Visible = false
         flying = false
@@ -153,7 +192,11 @@ local function createGUI()
     game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.E then
-            Fly()
+            if gameId == 10449761463 then
+                CFrameFly()  -- CFrame fly for this game
+            else
+                Fly()  -- Normal fly for other games
+            end
         end
     end)
 end
