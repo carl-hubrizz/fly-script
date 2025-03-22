@@ -7,12 +7,9 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- Game ID check
 local gameId = game.PlaceId
 
--- Function to Create GUI
 local function createGUI()
-    -- GUI Creation
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player:WaitForChild("PlayerGui")
     screenGui.Name = "FlyScriptGUI"
@@ -87,12 +84,10 @@ local function createGUI()
     closeButton.TextSize = 18
     closeButton.Parent = frame
 
-    -- Fly Variables
     local flying = false
     local speed = 50
     local bodyVelocity, bodyGyro
 
-    -- Function to Start/Stop CFrame Flying (for specific game ID)
     local function CFrameFly()
         if flying then
             flying = false
@@ -113,7 +108,6 @@ local function createGUI()
                 if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDirection = moveDirection - workspace.CurrentCamera.CFrame.RightVector end
                 if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDirection = moveDirection + workspace.CurrentCamera.CFrame.RightVector end
 
-                -- Adjust CFrame for flying movement
                 rootPart.CFrame = CFrame.new(lastPosition) * CFrame.new(moveDirection * speed * game:GetService("RunService").Heartbeat:Wait())
 
                 lastPosition = rootPart.Position
@@ -121,14 +115,12 @@ local function createGUI()
         end
     end
 
-    -- Function to Start/Stop Normal Flying (for other games)
     local function Fly()
         if flying then
             flying = false
             if bodyVelocity then bodyVelocity:Destroy() end
             if bodyGyro then bodyGyro:Destroy() end
             humanoid.PlatformStand = false
-            -- Restore animations by creating a new Animator
             local animator = humanoid:FindFirstChildOfClass("Animator")
             if not animator then
                 Instance.new("Animator", humanoid)
@@ -140,17 +132,16 @@ local function createGUI()
             bodyVelocity = Instance.new("BodyVelocity", rootPart)
             bodyVelocity.Velocity = Vector3.new(0, 0, 0)
             bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            
+
             bodyGyro = Instance.new("BodyGyro", rootPart)
             bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
             bodyGyro.P = 9e4
-            
-            -- Disable animations by removing the Animator
+
             local animator = humanoid:FindFirstChildOfClass("Animator")
             if animator then
                 animator:Destroy()
             end
-            
+
             game:GetService("RunService").Heartbeat:Connect(function()
                 if not flying then return end
                 local moveDirection = Vector3.new()
@@ -164,12 +155,11 @@ local function createGUI()
         end
     end
 
-    -- Toggle Fly on Button Click and Key Press
     toggleFly.MouseButton1Click:Connect(function()
         if gameId == 10449761463 then
-            CFrameFly()  -- CFrame fly for this game
+            CFrameFly()
         else
-            Fly()  -- Normal fly for other games
+            Fly()
         end
     end)
 
@@ -180,7 +170,6 @@ local function createGUI()
         if bodyGyro then bodyGyro:Destroy() end
     end)
 
-    -- Change Speed from GUI
     slider.FocusLost:Connect(function()
         local newSpeed = tonumber(slider.Text)
         if newSpeed and newSpeed > 0 then
@@ -188,20 +177,18 @@ local function createGUI()
         end
     end)
 
-    -- Keybind to Toggle Fly
     game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.E then
             if gameId == 10449761463 then
-                CFrameFly()  -- CFrame fly for this game
+                CFrameFly()
             else
-                Fly()  -- Normal fly for other games
+                Fly()
             end
         end
     end)
 end
 
--- Create GUI when character is added or respawned
 player.CharacterAdded:Connect(function(char)
     character = char
     humanoid = character:WaitForChild("Humanoid")
@@ -209,7 +196,6 @@ player.CharacterAdded:Connect(function(char)
     createGUI()
 end)
 
--- Initial GUI creation
 if player.Character then
     createGUI()
 end
